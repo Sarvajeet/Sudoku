@@ -20,19 +20,27 @@ class SudokuGUI:
         ]
 
         self.grid = SudokuGrid(initial_grid)
-        self.cells = [[tk.Entry(root, width=2, font=('Arial', 18), justify='center') for _ in range(9)] for _ in range(9)]
+        self.frames = [[tk.Frame(root, borderwidth=2, relief="solid") for _ in range(3)] for _ in range(3)]
+        self.cells = [[tk.Entry(self.frames[i//3][j//3], width=2, font=('Arial', 18), justify='center') for j in range(9)] for i in range(9)]
+
+        for i in range(3):
+            for j in range(3):
+                self.frames[i][j].grid(row=i, column=j)
 
         for i in range(9):
             for j in range(9):
-                self.cells[i][j].grid(row=i, column=j, padx=5, pady=5)
+                self.cells[i][j].grid(row=i%3, column=j%3, padx=1, pady=1)
 
         self.update_ui_from_grid()
 
-        solve_button = tk.Button(root, text="Solve", command=self.solve)
-        solve_button.grid(row=9, column=0, columnspan=4, pady=10)
+        button_frame = tk.Frame(root)
+        button_frame.grid(row=3, column=0, columnspan=3)
 
-        clear_button = tk.Button(root, text="Clear", command=self.clear)
-        clear_button.grid(row=9, column=5, columnspan=4, pady=10)
+        solve_button = tk.Button(button_frame, text="Solve", command=self.solve)
+        solve_button.pack(side="left", padx=10, pady=10)
+
+        clear_button = tk.Button(button_frame, text="Clear", command=self.clear)
+        clear_button.pack(side="left", padx=10, pady=10)
 
     def solve(self):
         self.get_grid_from_ui()
