@@ -6,12 +6,27 @@ class SudokuGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Sudoku")
-        self.grid = SudokuGrid()
+
+        initial_grid = [
+            [5, 3, 0, 0, 7, 0, 0, 0, 0],
+            [6, 0, 0, 1, 9, 5, 0, 0, 0],
+            [0, 9, 8, 0, 0, 0, 0, 6, 0],
+            [8, 0, 0, 0, 6, 0, 0, 0, 3],
+            [4, 0, 0, 8, 0, 3, 0, 0, 1],
+            [7, 0, 0, 0, 2, 0, 0, 0, 6],
+            [0, 6, 0, 0, 0, 0, 2, 8, 0],
+            [0, 0, 0, 4, 1, 9, 0, 0, 5],
+            [0, 0, 0, 0, 8, 0, 0, 7, 9]
+        ]
+
+        self.grid = SudokuGrid(initial_grid)
         self.cells = [[tk.Entry(root, width=2, font=('Arial', 18), justify='center') for _ in range(9)] for _ in range(9)]
 
         for i in range(9):
             for j in range(9):
                 self.cells[i][j].grid(row=i, column=j, padx=5, pady=5)
+
+        self.update_ui_from_grid()
 
         solve_button = tk.Button(root, text="Solve", command=self.solve)
         solve_button.grid(row=9, column=0, columnspan=4, pady=10)
@@ -47,7 +62,9 @@ class SudokuGUI:
         for i in range(9):
             for j in range(9):
                 self.cells[i][j].delete(0, tk.END)
-                self.cells[i][j].insert(0, str(self.grid.get_cell(i, j)))
+                cell_value = self.grid.get_cell(i, j)
+                if cell_value != 0:
+                    self.cells[i][j].insert(0, str(cell_value))
 
 if __name__ == '__main__':
     root = tk.Tk()
