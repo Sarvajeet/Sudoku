@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from .grid import SudokuGrid
+from grid import SudokuGrid
 
 class SudokuGUI:
     def __init__(self, root):
