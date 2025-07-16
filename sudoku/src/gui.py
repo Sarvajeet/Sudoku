@@ -6,6 +6,29 @@ class SudokuGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Sudoku")
+        self.root.geometry("500x600")
+
+        self.intro_frame = tk.Frame(root)
+        self.game_frame = tk.Frame(root)
+
+        self.show_intro()
+
+    def show_intro(self):
+        self.game_frame.pack_forget()
+        self.intro_frame.pack(expand=True)
+
+        banner = tk.Label(self.intro_frame, text="Sudoku", font=('Arial', 50))
+        banner.pack(pady=50)
+
+        start_button = tk.Button(self.intro_frame, text="Start", command=self.show_game)
+        start_button.pack(pady=20)
+
+        created_by = tk.Label(self.intro_frame, text="Created by Sarvajeet Gada", font=('Arial', 12))
+        created_by.pack(side="bottom", pady=10)
+
+    def show_game(self):
+        self.intro_frame.pack_forget()
+        self.game_frame.pack()
 
         initial_grid = [
             [5, 3, 0, 0, 7, 0, 0, 0, 0],
@@ -20,7 +43,7 @@ class SudokuGUI:
         ]
 
         self.grid = SudokuGrid(initial_grid)
-        self.frames = [[tk.Frame(root, borderwidth=2, relief="solid") for _ in range(3)] for _ in range(3)]
+        self.frames = [[tk.Frame(self.game_frame, borderwidth=2, relief="solid") for _ in range(3)] for _ in range(3)]
         self.cells = [[tk.Entry(self.frames[i//3][j//3], width=2, font=('Arial', 18), justify='center') for j in range(9)] for i in range(9)]
 
         for i in range(3):
@@ -33,7 +56,7 @@ class SudokuGUI:
 
         self.update_ui_from_grid()
 
-        button_frame = tk.Frame(root)
+        button_frame = tk.Frame(self.game_frame)
         button_frame.grid(row=3, column=0, columnspan=3)
 
         solve_button = tk.Button(button_frame, text="Solve", command=self.solve)
