@@ -13,14 +13,14 @@ Sudoku is a logic-based, combinatorial number-placement puzzle. The objective is
 
 ## How to Run
 
-To run the game, execute the following command:
+To run the GUI application, navigate to the `sudoku/src` directory and execute the following command:
 
 ```bash
-python sudoku/src/main.py
+python main.py
 ```
 
-To run the tests, execute the following command:
+To run the tests, execute the following command from the project root:
 
 ```bash
-python -m unittest sudoku/tests/test_main.py
+python -m unittest sudoku/tests/test_grid.py
 ```
