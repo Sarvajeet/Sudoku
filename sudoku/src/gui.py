@@ -41,6 +41,7 @@ class SudokuGUI:
             [0, 0, 0, 4, 1, 9, 0, 0, 5],
             [0, 0, 0, 0, 8, 0, 0, 7, 9]
         ]
+        self.initial_grid = [row[:] for row in initial_grid]
 
         self.grid = SudokuGrid(initial_grid)
         self.frames = [[tk.Frame(self.game_frame, borderwidth=2, relief="solid") for _ in range(3)] for _ in range(3)]
@@ -62,8 +63,8 @@ class SudokuGUI:
         solve_button = tk.Button(button_frame, text="Solve", command=self.solve)
         solve_button.pack(side="left", padx=10, pady=10)
 
-        clear_button = tk.Button(button_frame, text="Clear", command=self.clear)
-        clear_button.pack(side="left", padx=10, pady=10)
+        reset_button = tk.Button(button_frame, text="Reset", command=self.reset_puzzle)
+        reset_button.pack(side="left", padx=10, pady=10)
 
     def solve(self):
         self.get_grid_from_ui()
@@ -72,10 +73,10 @@ class SudokuGUI:
         else:
             messagebox.showerror("Error", "No solution exists for the given puzzle.")
 
-    def clear(self):
-        for i in range(9):
-            for j in range(9):
-                self.cells[i][j].delete(0, tk.END)
+    def reset_puzzle(self):
+        grid_copy = [row[:] for row in self.initial_grid]
+        self.grid = SudokuGrid(grid_copy)
+        self.update_ui_from_grid()
 
     def get_grid_from_ui(self):
         for i in range(9):
@@ -92,10 +93,19 @@ class SudokuGUI:
     def update_ui_from_grid(self):
         for i in range(9):
             for j in range(9):
-                self.cells[i][j].delete(0, tk.END)
+                cell = self.cells[i][j]
+                cell.config(state='normal')
+                cell.delete(0, tk.END)
+
                 cell_value = self.grid.get_cell(i, j)
+
                 if cell_value != 0:
-                    self.cells[i][j].insert(0, str(cell_value))
+                    cell.insert(0, str(cell_value))
+
+                if self.initial_grid[i][j] != 0:
+                    cell.config(state='readonly', readonlybackground='light gray', font=('Arial', 18, 'bold'))
+                else:
+                    cell.config(font=('Arial', 18), state='normal')
 
 if __name__ == '__main__':
     root = tk.Tk()
