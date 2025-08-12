@@ -65,5 +65,12 @@ class TestSudokuGrid(unittest.TestCase):
         # Test no conflict
         self.assertFalse(self.conflict_grid.is_conflict(0, 1))
 
+    def test_count_solutions(self):
+        # A solved grid has exactly one solution
+        self.assertEqual(self.solved_grid.count_solutions(), 1)
+
+        # The standard unsolved grid should have a unique solution
+        self.assertEqual(self.unsolved_grid.count_solutions(), 1)
+
 if __name__ == '__main__':
     unittest.main()

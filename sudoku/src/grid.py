@@ -1,3 +1,5 @@
+import random
+
 class SudokuGrid:
     def __init__(self, initial_grid=None):
         if initial_grid:
@@ -43,6 +45,23 @@ class SudokuGrid:
                     return False
         return True
 
+    def count_solutions(self):
+        self.counter = 0
+        self._solve_and_count()
+        return self.counter
+
+    def _solve_and_count(self):
+        for i in range(9):
+            for j in range(9):
+                if self.grid[i][j] == 0:
+                    for num in range(1, 10):
+                        if self.is_valid_move(i, j, num):
+                            self.grid[i][j] = num
+                            self._solve_and_count()
+                            self.grid[i][j] = 0  # Backtrack
+                    return
+        self.counter += 1
+
     def is_conflict(self, row, col):
         num = self.get_cell(row, col)
         if num == 0:
@@ -69,14 +88,18 @@ class SudokuGrid:
                     return True
         return False
 
-    def solve(self):
+    def solve(self, randomize=False):
+        numbers = list(range(1, 10))
+        if randomize:
+            random.shuffle(numbers)
+
         for i in range(9):
             for j in range(9):
                 if self.grid[i][j] == 0:
-                    for num in range(1, 10):
+                    for num in numbers:
                         if self.is_valid_move(i, j, num):
                             self.grid[i][j] = num
-                            if self.solve():
+                            if self.solve(randomize=randomize):
                                 return True
                             self.grid[i][j] = 0
                     return False

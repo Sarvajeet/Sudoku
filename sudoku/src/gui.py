@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from grid import SudokuGrid
-from puzzles import get_puzzle
+from generator import SudokuGenerator
 
 class SudokuGUI:
     def __init__(self, root):
@@ -38,7 +38,8 @@ class SudokuGUI:
         created_by.pack(side="bottom", pady=10)
 
     def start_game(self, difficulty):
-        puzzle = get_puzzle(difficulty)
+        generator = SudokuGenerator()
+        puzzle = generator.generate(difficulty)
         self.show_game(puzzle)
 
     def show_game(self, initial_grid):
