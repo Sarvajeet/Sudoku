@@ -8,6 +8,7 @@ class SudokuGUI:
         self.root = root
         self.root.title("Sudoku")
         self.root.geometry("500x600")
+        self.is_initializing = False
 
         self.intro_frame = tk.Frame(root)
         self.game_frame = tk.Frame(root)
@@ -60,7 +61,9 @@ class SudokuGUI:
                 self.cells[i][j].grid(row=i%3, column=j%3, padx=1, pady=1)
                 self.cell_vars[i][j].trace_add("write", lambda name, index, mode, r=i, c=j: self._cell_updated(r, c))
 
+        self.is_initializing = True
         self.update_ui_from_grid()
+        self.is_initializing = False
 
         button_frame = tk.Frame(self.game_frame)
         button_frame.grid(row=3, column=0, columnspan=3)
@@ -74,16 +77,22 @@ class SudokuGUI:
     def solve(self):
         self.get_grid_from_ui()
         if self.grid.solve():
+            self.is_initializing = True
             self.update_ui_from_grid()
+            self.is_initializing = False
         else:
             messagebox.showerror("Error", "No solution exists for the given puzzle.")
 
     def reset_puzzle(self):
         grid_copy = [row[:] for row in self.initial_grid]
         self.grid = SudokuGrid(grid_copy)
+        self.is_initializing = True
         self.update_ui_from_grid()
+        self.is_initializing = False
 
     def _cell_updated(self, row, col):
+        if self.is_initializing:
+            return
         self.get_grid_from_ui()
 
         for i in range(9):
