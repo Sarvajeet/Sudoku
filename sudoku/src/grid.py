@@ -43,6 +43,32 @@ class SudokuGrid:
                     return False
         return True
 
+    def is_conflict(self, row, col):
+        num = self.get_cell(row, col)
+        if num == 0:
+            return False
+
+        # Check row
+        for x in range(9):
+            if x != col and self.grid[row][x] == num:
+                return True
+
+        # Check column
+        for x in range(9):
+            if x != row and self.grid[x][col] == num:
+                return True
+
+        # Check 3x3 subgrid
+        start_row = row - row % 3
+        start_col = col - col % 3
+        for i in range(3):
+            for j in range(3):
+                if (i + start_row == row) and (j + start_col == col):
+                    continue
+                if self.grid[i + start_row][j + start_col] == num:
+                    return True
+        return False
+
     def solve(self):
         for i in range(9):
             for j in range(9):

@@ -27,6 +27,17 @@ class TestSudokuGrid(unittest.TestCase):
             [0, 0, 0, 4, 1, 9, 0, 0, 5],
             [0, 0, 0, 0, 8, 0, 0, 7, 9]
         ])
+        self.conflict_grid = SudokuGrid([
+            [5, 3, 0, 0, 7, 0, 0, 0, 0],
+            [6, 0, 0, 1, 9, 5, 0, 0, 0],
+            [0, 9, 8, 0, 0, 0, 0, 6, 0],
+            [8, 0, 0, 0, 6, 0, 0, 0, 3],
+            [4, 0, 0, 8, 0, 3, 0, 0, 1],
+            [7, 0, 0, 0, 2, 0, 0, 0, 6],
+            [0, 6, 0, 0, 0, 0, 2, 8, 0],
+            [0, 0, 0, 4, 1, 9, 0, 0, 5],
+            [5, 0, 0, 0, 8, 0, 0, 7, 9]
+        ])
 
     def test_is_valid_move(self):
         self.assertFalse(self.solved_grid.is_valid_move(0, 0, 5))
@@ -36,6 +47,23 @@ class TestSudokuGrid(unittest.TestCase):
     def test_solve(self):
         self.assertTrue(self.unsolved_grid.solve())
         self.assertEqual(self.unsolved_grid.get_cell(0, 2), 4)
+
+    def test_is_conflict(self):
+        # Test row conflict
+        self.conflict_grid.set_cell(0, 2, 5)
+        self.assertTrue(self.conflict_grid.is_conflict(0, 2))
+        self.assertTrue(self.conflict_grid.is_conflict(0, 0))
+        self.conflict_grid.set_cell(0, 2, 1) # Reset for next test
+
+        # Test column conflict
+        self.assertTrue(self.conflict_grid.is_conflict(8, 0))
+
+        # Test box conflict
+        self.conflict_grid.set_cell(1, 1, 9)
+        self.assertTrue(self.conflict_grid.is_conflict(1, 1))
+
+        # Test no conflict
+        self.assertFalse(self.conflict_grid.is_conflict(0, 1))
 
 if __name__ == '__main__':
     unittest.main()

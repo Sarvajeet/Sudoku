@@ -47,8 +47,9 @@ class SudokuGUI:
         self.initial_grid = [row[:] for row in initial_grid]
 
         self.grid = SudokuGrid(initial_grid)
+        self.cell_vars = [[tk.StringVar() for _ in range(9)] for _ in range(9)]
         self.frames = [[tk.Frame(self.game_frame, borderwidth=2, relief="solid") for _ in range(3)] for _ in range(3)]
-        self.cells = [[tk.Entry(self.frames[i//3][j//3], width=2, font=('Arial', 18), justify='center') for j in range(9)] for i in range(9)]
+        self.cells = [[tk.Entry(self.frames[i//3][j//3], width=2, font=('Arial', 18), justify='center', textvariable=self.cell_vars[i][j]) for j in range(9)] for i in range(9)]
 
         for i in range(3):
             for j in range(3):
@@ -57,6 +58,7 @@ class SudokuGUI:
         for i in range(9):
             for j in range(9):
                 self.cells[i][j].grid(row=i%3, column=j%3, padx=1, pady=1)
+                self.cell_vars[i][j].trace_add("write", lambda name, index, mode, r=i, c=j: self._cell_updated(r, c))
 
         self.update_ui_from_grid()
 
@@ -81,29 +83,40 @@ class SudokuGUI:
         self.grid = SudokuGrid(grid_copy)
         self.update_ui_from_grid()
 
+    def _cell_updated(self, row, col):
+        self.get_grid_from_ui()
+
+        for i in range(9):
+            for j in range(9):
+                if self.initial_grid[i][j] == 0:
+                    cell = self.cells[i][j]
+                    if self.grid.is_conflict(i, j):
+                        cell.config(fg='red')
+                    else:
+                        cell.config(fg='black')
+
     def get_grid_from_ui(self):
         for i in range(9):
             for j in range(9):
                 try:
-                    value = int(self.cells[i][j].get())
+                    value = int(self.cell_vars[i][j].get())
                     if 0 <= value <= 9:
                         self.grid.set_cell(i, j, value)
                     else:
                         self.grid.set_cell(i, j, 0)
-                except ValueError:
+                except (ValueError, tk.TclError):
                     self.grid.set_cell(i, j, 0)
 
     def update_ui_from_grid(self):
         for i in range(9):
             for j in range(9):
                 cell = self.cells[i][j]
-                cell.config(state='normal')
-                cell.delete(0, tk.END)
-
                 cell_value = self.grid.get_cell(i, j)
 
                 if cell_value != 0:
-                    cell.insert(0, str(cell_value))
+                    self.cell_vars[i][j].set(str(cell_value))
+                else:
+                    self.cell_vars[i][j].set("")
 
                 if self.initial_grid[i][j] != 0:
                     cell.config(state='readonly', readonlybackground='light gray', font=('Arial', 18, 'bold'))
