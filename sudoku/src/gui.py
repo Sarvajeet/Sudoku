@@ -76,19 +76,22 @@ class SudokuGUI:
         timer_frame = tk.Frame(self.game_frame)
         timer_frame.grid(row=3, column=0, columnspan=3, pady=10)
         self.timer_label = tk.Label(timer_frame, text="Time: 00:00", font=('Arial', 14))
-        self.timer_label.pack()
+        self.timer_label.grid(row=0, column=0)
 
         button_frame = tk.Frame(self.game_frame)
         button_frame.grid(row=4, column=0, columnspan=3)
 
         solve_button = tk.Button(button_frame, text="Solve", command=self.solve)
-        solve_button.pack(side="left", padx=10, pady=10)
+        solve_button.grid(row=0, column=0, padx=10, pady=10)
 
         reset_button = tk.Button(button_frame, text="Reset", command=self.reset_puzzle)
-        reset_button.pack(side="left", padx=10, pady=10)
+        reset_button.grid(row=0, column=1, padx=10, pady=10)
 
         back_button = tk.Button(button_frame, text="Back", command=self._show_intro_screen)
-        back_button.pack(side="left", padx=10, pady=10)
+        back_button.grid(row=0, column=2, padx=10, pady=10)
+
+        exit_button = tk.Button(button_frame, text="Exit", command=self.root.destroy)
+        exit_button.grid(row=0, column=3, padx=10, pady=10)
 
     def _show_intro_screen(self):
         self._stop_timer()
