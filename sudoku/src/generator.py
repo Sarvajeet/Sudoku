@@ -1,5 +1,8 @@
 import random
-from .grid import SudokuGrid
+try:
+    from .grid import SudokuGrid
+except ImportError:
+    from grid import SudokuGrid
 
 class SudokuGenerator:
     def __init__(self):
