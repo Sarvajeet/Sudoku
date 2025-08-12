@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from grid import SudokuGrid
+from puzzles import get_puzzle
 
 class SudokuGUI:
     def __init__(self, root):
@@ -20,27 +21,29 @@ class SudokuGUI:
         banner = tk.Label(self.intro_frame, text="Sudoku", font=('Arial', 50))
         banner.pack(pady=50)
 
-        start_button = tk.Button(self.intro_frame, text="Start", command=self.show_game)
-        start_button.pack(pady=20)
+        difficulty_frame = tk.Frame(self.intro_frame)
+        difficulty_frame.pack(pady=20)
+
+        easy_button = tk.Button(difficulty_frame, text="Easy", command=lambda: self.start_game("easy"))
+        easy_button.pack(side="left", padx=10)
+
+        medium_button = tk.Button(difficulty_frame, text="Medium", command=lambda: self.start_game("medium"))
+        medium_button.pack(side="left", padx=10)
+
+        hard_button = tk.Button(difficulty_frame, text="Hard", command=lambda: self.start_game("hard"))
+        hard_button.pack(side="left", padx=10)
 
         created_by = tk.Label(self.intro_frame, text="Created by Sarvajeet Gada", font=('Arial', 12))
         created_by.pack(side="bottom", pady=10)
 
-    def show_game(self):
+    def start_game(self, difficulty):
+        puzzle = get_puzzle(difficulty)
+        self.show_game(puzzle)
+
+    def show_game(self, initial_grid):
         self.intro_frame.pack_forget()
         self.game_frame.pack()
 
-        initial_grid = [
-            [5, 3, 0, 0, 7, 0, 0, 0, 0],
-            [6, 0, 0, 1, 9, 5, 0, 0, 0],
-            [0, 9, 8, 0, 0, 0, 0, 6, 0],
-            [8, 0, 0, 0, 6, 0, 0, 0, 3],
-            [4, 0, 0, 8, 0, 3, 0, 0, 1],
-            [7, 0, 0, 0, 2, 0, 0, 0, 6],
-            [0, 6, 0, 0, 0, 0, 2, 8, 0],
-            [0, 0, 0, 4, 1, 9, 0, 0, 5],
-            [0, 0, 0, 0, 8, 0, 0, 7, 9]
-        ]
         self.initial_grid = [row[:] for row in initial_grid]
 
         self.grid = SudokuGrid(initial_grid)
