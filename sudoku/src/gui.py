@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import time
 from grid import SudokuGrid
 from generator import SudokuGenerator
 
@@ -9,6 +10,9 @@ class SudokuGUI:
         self.root.title("Sudoku")
         self.root.geometry("500x600")
         self.is_initializing = False
+        self.start_time = None
+        self.timer_running = False
+        self.after_id = None
 
         self.intro_frame = tk.Frame(root)
         self.game_frame = tk.Frame(root)
@@ -66,8 +70,16 @@ class SudokuGUI:
         self.update_ui_from_grid()
         self.is_initializing = False
 
+        self._reset_timer()
+        self._start_timer()
+
+        timer_frame = tk.Frame(self.game_frame)
+        timer_frame.grid(row=3, column=0, columnspan=3, pady=10)
+        self.timer_label = tk.Label(timer_frame, text="Time: 00:00", font=('Arial', 14))
+        self.timer_label.pack()
+
         button_frame = tk.Frame(self.game_frame)
-        button_frame.grid(row=3, column=0, columnspan=3)
+        button_frame.grid(row=4, column=0, columnspan=3)
 
         solve_button = tk.Button(button_frame, text="Solve", command=self.solve)
         solve_button.pack(side="left", padx=10, pady=10)
@@ -75,7 +87,16 @@ class SudokuGUI:
         reset_button = tk.Button(button_frame, text="Reset", command=self.reset_puzzle)
         reset_button.pack(side="left", padx=10, pady=10)
 
+        back_button = tk.Button(button_frame, text="Back", command=self._show_intro_screen)
+        back_button.pack(side="left", padx=10, pady=10)
+
+    def _show_intro_screen(self):
+        self._stop_timer()
+        self.game_frame.pack_forget()
+        self.intro_frame.pack(expand=True)
+
     def solve(self):
+        self._stop_timer()
         self.get_grid_from_ui()
         if self.grid.solve():
             self.is_initializing = True
@@ -90,6 +111,33 @@ class SudokuGUI:
         self.is_initializing = True
         self.update_ui_from_grid()
         self.is_initializing = False
+        self._reset_timer()
+        self._start_timer()
+
+    def _start_timer(self):
+        if not self.timer_running:
+            self.start_time = time.time()
+            self.timer_running = True
+            self._update_timer()
+
+    def _stop_timer(self):
+        self.timer_running = False
+        if self.after_id:
+            self.root.after_cancel(self.after_id)
+            self.after_id = None
+
+    def _reset_timer(self):
+        self._stop_timer()
+        self.timer_label.config(text="Time: 00:00")
+        self.start_time = None
+
+    def _update_timer(self):
+        if self.timer_running:
+            elapsed_seconds = int(time.time() - self.start_time)
+            minutes = elapsed_seconds // 60
+            seconds = elapsed_seconds % 60
+            self.timer_label.config(text=f"Time: {minutes:02d}:{seconds:02d}")
+            self.after_id = self.root.after(1000, self._update_timer)
 
     def _cell_updated(self, row, col):
         if self.is_initializing:
@@ -104,6 +152,10 @@ class SudokuGUI:
                         cell.config(fg='red')
                     else:
                         cell.config(fg='black')
+
+        if self.grid.is_solved():
+            self._stop_timer()
+            messagebox.showinfo("Sudoku", "Congratulations! You solved the puzzle!")
 
     def get_grid_from_ui(self):
         for i in range(9):

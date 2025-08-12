@@ -72,5 +72,29 @@ class TestSudokuGrid(unittest.TestCase):
         # The standard unsolved grid should have a unique solution
         self.assertEqual(self.unsolved_grid.count_solutions(), 1)
 
+    def test_is_solved(self):
+        # A solved grid is solved
+        self.assertTrue(self.solved_grid.is_solved())
+
+        # An unsolved grid is not solved
+        self.assertFalse(self.unsolved_grid.is_solved())
+
+        # A grid with conflicts is not solved
+        self.assertFalse(self.conflict_grid.is_solved())
+
+        # A full grid with a conflict is also not solved
+        full_conflict_grid = SudokuGrid([
+            [5, 3, 4, 6, 7, 8, 9, 1, 2],
+            [6, 7, 2, 1, 9, 5, 3, 4, 8],
+            [1, 9, 8, 3, 4, 2, 5, 6, 7],
+            [8, 5, 9, 7, 6, 1, 4, 2, 3],
+            [4, 2, 6, 8, 5, 3, 7, 9, 1],
+            [7, 1, 3, 9, 2, 4, 8, 5, 6],
+            [9, 6, 1, 5, 3, 7, 2, 8, 4],
+            [2, 8, 7, 4, 1, 9, 6, 3, 5],
+            [3, 4, 5, 2, 8, 6, 1, 7, 5] # Conflict with (0,0)
+        ])
+        self.assertFalse(full_conflict_grid.is_solved())
+
 if __name__ == '__main__':
     unittest.main()

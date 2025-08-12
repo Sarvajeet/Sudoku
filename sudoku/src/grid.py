@@ -45,6 +45,15 @@ class SudokuGrid:
                     return False
         return True
 
+    def is_solved(self):
+        for r in range(9):
+            for c in range(9):
+                if self.grid[r][c] == 0:
+                    return False
+                if self.is_conflict(r, c):
+                    return False
+        return True
+
     def count_solutions(self):
         self.counter = 0
         self._solve_and_count()
