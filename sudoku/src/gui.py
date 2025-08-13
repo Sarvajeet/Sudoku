@@ -66,13 +66,6 @@ class SudokuGUI:
                 self.cells[i][j].grid(row=i%3, column=j%3, padx=1, pady=1)
                 self.cell_vars[i][j].trace_add("write", lambda name, index, mode, r=i, c=j: self._cell_updated(r, c))
 
-        self.is_initializing = True
-        self.update_ui_from_grid()
-        self.is_initializing = False
-
-        self._reset_timer()
-        self._start_timer()
-
         timer_frame = tk.Frame(self.game_frame)
         timer_frame.grid(row=3, column=0, columnspan=3, pady=10)
         self.timer_label = tk.Label(timer_frame, text="Time: 00:00", font=('Arial', 14))
@@ -92,6 +85,13 @@ class SudokuGUI:
 
         exit_button = tk.Button(button_frame, text="Exit", command=self.root.destroy)
         exit_button.grid(row=0, column=3, padx=10, pady=10)
+
+        self.is_initializing = True
+        self.update_ui_from_grid()
+        self.is_initializing = False
+
+        self._reset_timer()
+        self._start_timer()
 
     def _show_intro_screen(self):
         self._stop_timer()
